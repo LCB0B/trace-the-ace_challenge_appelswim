@@ -1,0 +1,25 @@
+# Versions the competition runtime pinned, i.e. the environment this model was
+# scored in. The boosters and distilled children are pickled joblib artifacts,
+# so scikit-learn and xgboost versions in particular are load-bearing: a
+# different minor version may warn, silently change behaviour, or fail to load.
+#
+#   python -m venv .venv && . .venv/bin/activate
+#   pip install -r requirements.txt
+#
+# Python 3.12.
+
+# --- feature pipeline and the GBM half ---
+scikit-learn==1.8.0
+xgboost==3.3.0
+pandas==3.0.3
+numpy==2.2.6
+scipy==1.17.1
+joblib==1.5.3
+
+# --- the LLM half ---
+torch==2.11.0
+transformers==4.57.6
+peft==0.19.1
+accelerate==1.13.0
+safetensors==0.7.0
+tokenizers==0.22.2

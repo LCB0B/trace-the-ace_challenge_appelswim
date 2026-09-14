@@ -87,6 +87,7 @@ assets/
   magnificat/                        feature-engineering package (25 modules)
 FEATURES.md                          all 177 booster columns, one line each
 tools/build_feature_table.py         regenerates FEATURES.md from the model itself
+requirements.txt                     pinned to the environment the model was scored in
 ```
 
 > **`assets/` is byte-identical to the submitted zip and must stay that way.** `main.py`
@@ -110,6 +111,8 @@ git clone https://github.com/LCB0B/trace-the-ace_challenge_appelswim.git
 
 ```bash
 git lfs install && git clone <this repo> && cd trace-the-ace_challenge_appelswim
+python -m venv .venv && . .venv/bin/activate
+pip install -r requirements.txt               # pinned to the scoring environment
 ln -s /path/to/competition/data data          # read-only; must contain test_features.csv
 huggingface-cli download Qwen/Qwen3-8B --local-dir huggingface_models/Qwen/Qwen3-8B
 python main.py                                # writes submission.csv
@@ -117,6 +120,10 @@ python main.py                                # writes submission.csv
 
 Requirements: 1x A100-80GB, Python 3.12, no internet needed at run time. The full test set takes
 about 3 h 40 min.
+
+The pins in `requirements.txt` are the competition runtime's own, and they matter: the booster
+and the five distilled children are pickled joblib artifacts, so a different `scikit-learn` or
+`xgboost` minor version can warn, change behaviour, or refuse to load.
 
 `main.py` verifies every asset against `assets/manifest_sha256.txt`, merges the LoRA onto the
 base model, builds all feature blocks from the raw transcripts, scores both halves, Platt-maps
@@ -133,6 +140,15 @@ score (0.4546 either way) and 399/399 tensors bit-identical, at 99x smaller.
 ---
 
 ## 4. Training the LLM half
+
+> **The training code is not in this repository.** This repo holds the *inference* bundle -- the
+> exact artifact the platform ran. The commands in sections 4 and 5 are the recipes that produced
+> the shipped weights, given for reproducibility and review; they will not run from a clone of
+> this repo as-is. The LLM half is trained with our fork of
+> [`umass-ml4ed/dialogue-kt`](https://github.com/umass-ml4ed/dialogue-kt), and the GBM half with
+> our own research tree. The trained artifacts themselves are all here, so you do not need either
+> to run the model.
+
 
 A two-stage LoRA fine-tune of `Qwen/Qwen3-8B`, built on the
 [LLMKT / dialogue-kt](https://github.com/umass-ml4ed/dialogue-kt) architecture: the model is
