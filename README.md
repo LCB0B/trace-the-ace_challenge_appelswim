@@ -591,40 +591,7 @@ Consequences we followed throughout:
 
 ---
 
-## 7. What did not work
-
-Recorded because negative results were most of the information.
-
-- **Every XGBoost knob.** 57 one-variable arms on this exact base, on the final day: lambda,
-  alpha, `min_child_weight`, all three `colsample_*`, `subsample`, `max_leaves`, `gamma`,
-  `max_delta_step`, `scale_pos_weight`, depthwise regime, lr x trees. Every curve is shallow with
-  an interior optimum at or beside the incumbent, and stacked combinations were sub-additive —
-  every pair and the triple did worse than the best single change.
-- **Compressing the objective text** (see above): −1.87 to −5.15 AUROC.
-- **Alternative v2 aggregations:** k=35, per-code empirical-Bayes k, bounded-share ratios, and
-  all four narrow collapses. All refuted.
-- **k-shrinking the other distilled blocks:** `d29dst_` resolves in-domain (−0.00292) but costs
-  about 1.6 AUROC on QATD; `studst_` is null.
-- **Row weighting** by objective frequency: null to harmful.
-- **Contingency-style interaction features:** 6 of 6 null. The blocker is that session-level
-  aggregation makes a feature constant across all of a session's objectives, which is precisely
-  the axis the task asks you to discriminate along.
-- **Adding width.** Three of four width-increasing changes that resolved *better* on clean
-  held-out rows went on to score *worse* on the leaderboard. In-domain improvement was close to
-  uninformative about generalisation.
-- **Pruning columns by distribution shift.** We ranked blocks by how far their inputs sat from
-  the training distribution and dropped the worst; every ablation hurt, and the block furthest
-  off-distribution was the second most damaging to remove. A block can read far off-distribution
-  and still carry signal. Judge by ablation, never by a z-score.
-
-A structural note worth carrying forward: **this configuration sits on an isolated peak.** Eleven
-perturbations by unrelated mechanisms all land 1.2–2.0 AUROC lower on out-of-corpus transfer,
-while the shipped model sits about 0.8 above that shelf. The size of an in-domain gain does not
-predict the transfer cost (r = −0.09, p = 0.78) — it is a cliff, not a gradient.
-
----
-
-## 8. Licence and data
+## 7. Licence and data
 
 Code in this repository is released under the **MIT Licence** (see [LICENSE](LICENSE)).
 
