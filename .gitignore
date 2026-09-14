@@ -1,0 +1,13 @@
+# Competition data is not redistributable; symlink or mount it here.
+data/
+data
+
+# Base model weights are downloaded separately (Qwen/Qwen3-8B, Apache-2.0).
+huggingface_models/
+
+# Inference output.
+submission.csv
+
+__pycache__/
+*.py[cod]
+.venv/
