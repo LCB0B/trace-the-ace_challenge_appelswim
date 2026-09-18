@@ -24,15 +24,83 @@ OUT = ROOT / "FEATURES.md"
 # Families, in the order they are presented.
 # prefix -> (family label, instrument)
 # --------------------------------------------------------------------------
+#: Columns are grouped by the CONSTRUCT they measure, not by the prefix that happens to
+#: carry it. Tutor moves arrive through two instruments (the v2 pass as `v2ht_`, the
+#: interview pass as `d29dst_`) and student signals through three, so a prefix-per-family
+#: split scattered one construct across several tables. Within tutor moves the codebook a
+#: code comes from is reported separately, because 15 of them are NTO's, verbatim.
 FAMILIES: list[tuple[str, str, str]] = [
+    ("__tutor__", "Tutor move",
+     "LLM-distilled - NTO codebook, interview codes, v2 additions"),
+    ("__student__", "Student signal",
+     "LLM-distilled - interview codes, taxonomy v2, 12-code student states"),
     ("recdst_", "Answer log", "LLM-distilled - per-turn correctness"),
     ("ctg_", "Contingency", "regex state machine"),
     ("rep_", "Repair", "regex state machine"),
-    ("d29dst_", "Interview codes", "LLM-distilled - doc29 codebook"),
-    ("v2ht_", "Tutor move (v2)", "LLM-distilled - taxonomy v2, k-shrunk"),
-    ("v2hs_", "Student move (v2)", "LLM-distilled - taxonomy v2, k-shrunk"),
-    ("studst_", "Student state", "LLM-distilled - 12-code student states"),
 ]
+
+#: NTO's 15 tutor codes, verbatim (docs/sandpiper_codebooks.md).
+NTO_CODES = {
+    "prompting_related_concepts", "prompting_alternative_representation",
+    "prompting_self_explanation", "prompting_next_step", "prompting_self_correction",
+    "feedback_correct", "feedback_incorrect", "feedback_neutral", "revoicing",
+    "restating", "giving_hint", "giving_example", "explaining_conceptual",
+    "explaining_procedural", "giving_answer",
+}
+#: The 7 codes written from the practising-tutor interviews. Uppercase in `d29dst_`.
+DOC29_TUTOR = {
+    "NORMALIZING_DIFFICULTY", "RELEASE_HANDOFF", "TRANSFER_PROBE",
+    "SIMPLIFYING_TO_SUBPROBLEM", "MOTIVATING_RELEVANCE", "SUMMARIZING_PROGRESS",
+    "OFFERING_CHOICE",
+}
+#: Added in v2 after hand-scoring showed the vocabulary could not express them.
+V2_NEW_TUTOR = {"asking_question", "guiding_session", "explaining_tool", "giving_praise",
+                "worked_demonstration"}
+TUTOR_RESIDUAL = {"tutor_unintelligible", "tutor_technical", "tutor_social", "tutor_other",
+                  "tutor_no_move"}
+DERIVED_RATIOS = {"elicit_to_tell", "feedback_positive_ratio"}
+
+
+def source_of(col: str) -> str:
+    """Which codebook a tutor-move or student-signal column's code comes from."""
+    if col.startswith("v2ht_"):
+        code = col[len("v2ht_"):]
+        if code in DERIVED_RATIOS:
+            return "derived ratio"
+        code = code.removesuffix("_rate")
+        if code in NTO_CODES:
+            return "NTO codebook"
+        if code in V2_NEW_TUTOR:
+            return "added in v2"
+        if code in TUTOR_RESIDUAL:
+            return "residual"
+        return "interview (doc29)"
+    if col.startswith("d29dst_"):
+        return "interview (doc29)"
+    if col.startswith("v2hs_"):
+        return "taxonomy v2"
+    if col.startswith("studst_"):
+        return "12-code student states"
+    return ""
+
+
+def is_tutor(col: str) -> bool:
+    if col.startswith("v2ht_"):
+        return True
+    if col.startswith("d29dst_"):
+        stem = col[len("d29dst_"):]
+        # the interview pass labels BOTH speakers; its tutor codes are the uppercase ones,
+        # plus any_move_rate, which is the share of tutor turns carrying any of them.
+        code = stem.removesuffix("_late").removesuffix("_rate")
+        return code in DOC29_TUTOR or stem == "any_move_rate"
+    return False
+
+
+def is_student(col: str) -> bool:
+    return col.startswith(("v2hs_", "studst_")) or (
+        col.startswith("d29dst_") and not is_tutor(col))
+
+
 HANDCRAFTED = ("Handcrafted", "regex / counts / timestamps")
 
 # --------------------------------------------------------------------------
@@ -210,7 +278,11 @@ def describe(col: str) -> str:
 
 
 def family_of(col: str) -> tuple[str, str]:
-    for prefix, label, instrument in FAMILIES:
+    if is_tutor(col):
+        return FAMILIES[0][1], FAMILIES[0][2]
+    if is_student(col):
+        return FAMILIES[1][1], FAMILIES[1][2]
+    for prefix, label, instrument in FAMILIES[2:]:
         if col.startswith(prefix):
             return label, instrument
     return HANDCRAFTED
@@ -261,6 +333,11 @@ def render(cols: list[str], dropped: list[str]) -> str:
         "",
         "## Summary",
         "",
+        "Columns are grouped by the construct they measure. The write-up groups the same 177",
+        "columns by construct too, but counts the regex tutor and student columns under tutor",
+        "moves and student signals rather than under Handcrafted, so its per-construct totals",
+        "are larger. Same matrix, one classification decision apart.",
+        "",
         "| family | n | instrument |",
         "|---|---:|---|",
     ]
@@ -271,12 +348,41 @@ def render(cols: list[str], dropped: list[str]) -> str:
         lines.append(f"| {label} | {len(grouped[label])} | {instrument} |")
     lines += [f"| **Total** | **{len(cols)}** | |", ""]
 
+    tutor = grouped[FAMILIES[0][1]]
+    by_source: dict[str, int] = {}
+    for col in tutor:
+        by_source[source_of(col)] = by_source.get(source_of(col), 0) + 1
+    lines += [
+        "Tutor moves come from three codebooks, and which one matters: 15 of the codes are",
+        "NTO's, used verbatim, and the rest are ours.",
+        "",
+        "| tutor-move source | n |",
+        "|---|---:|",
+    ]
+    for label in ("NTO codebook", "interview (doc29)", "added in v2", "residual",
+                  "derived ratio"):
+        if by_source.get(label):
+            lines.append(f"| {label} | {by_source[label]} |")
+    lines += [
+        "",
+        "The 7 interview codes are counted once per instrument that measures them: as",
+        "`v2ht_*` session rates and again as `d29dst_*` rate/late pairs. Both blocks are in",
+        "the booster, so both are listed.",
+        "",
+    ]
+
     for label in order:
         if not grouped[label]:
             continue
-        lines += [f"## {label} ({len(grouped[label])})", "", "| column | description |", "|---|---|"]
+        annotated = label in (FAMILIES[0][1], FAMILIES[1][1])
+        head = ("| column | source | description |", "|---|---|---|") if annotated else (
+            "| column | description |", "|---|---|")
+        lines += [f"## {label} ({len(grouped[label])})", "", *head]
         for col in grouped[label]:
-            lines.append(f"| `{col}` | {describe(col)} |")
+            if annotated:
+                lines.append(f"| `{col}` | {source_of(col)} | {describe(col)} |")
+            else:
+                lines.append(f"| `{col}` | {describe(col)} |")
         lines.append("")
 
     lines += [

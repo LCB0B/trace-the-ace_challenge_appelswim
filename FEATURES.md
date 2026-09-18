@@ -16,17 +16,35 @@ feature code but dropped by the transformer; they are listed at the end.
 
 ## Summary
 
+Columns are grouped by the construct they measure. The write-up groups the same 177
+columns by construct too, but counts the regex tutor and student columns under tutor
+moves and student signals rather than under Handcrafted, so its per-construct totals
+are larger. Same matrix, one classification decision apart.
+
 | family | n | instrument |
 |---|---:|---|
 | Handcrafted | 54 | regex / counts / timestamps |
+| Tutor move | 49 | LLM-distilled - NTO codebook, interview codes, v2 additions |
+| Student signal | 43 | LLM-distilled - interview codes, taxonomy v2, 12-code student states |
 | Answer log | 14 | LLM-distilled - per-turn correctness |
 | Contingency | 10 | regex state machine |
 | Repair | 7 | regex state machine |
-| Interview codes | 34 | LLM-distilled - doc29 codebook |
-| Tutor move (v2) | 34 | LLM-distilled - taxonomy v2, k-shrunk |
-| Student move (v2) | 12 | LLM-distilled - taxonomy v2, k-shrunk |
-| Student state | 12 | LLM-distilled - 12-code student states |
 | **Total** | **177** | |
+
+Tutor moves come from three codebooks, and which one matters: 15 of the codes are
+NTO's, used verbatim, and the rest are ours.
+
+| tutor-move source | n |
+|---|---:|
+| NTO codebook | 15 |
+| interview (doc29) | 22 |
+| added in v2 | 5 |
+| residual | 5 |
+| derived ratio | 2 |
+
+The 7 interview codes are counted once per instrument that measures them: as
+`v2ht_*` session rates and again as `d29dst_*` rate/late pairs. Both blocks are in
+the booster, so both are listed.
 
 ## Handcrafted (54)
 
@@ -87,6 +105,108 @@ feature code but dropped by the transformer; they are listed at the end.
 | `tutor_prior_knowledge_check_rate` | Rate at which the tutor probes what the student already knows. |
 | `student_turn_share` | Student turns divided by total utterances. |
 
+## Tutor move (49)
+
+| column | source | description |
+|---|---|---|
+| `d29dst_NORMALIZING_DIFFICULTY_rate` | interview (doc29) | Session rate of 'normalises the difficulty'. |
+| `d29dst_NORMALIZING_DIFFICULTY_late` | interview (doc29) | Rate of 'normalises the difficulty' within the final third of the session. |
+| `d29dst_RELEASE_HANDOFF_rate` | interview (doc29) | Session rate of 'hands the work back to the student'. |
+| `d29dst_RELEASE_HANDOFF_late` | interview (doc29) | Rate of 'hands the work back to the student' within the final third of the session. |
+| `d29dst_TRANSFER_PROBE_rate` | interview (doc29) | Session rate of 'probes transfer to a new case'. |
+| `d29dst_TRANSFER_PROBE_late` | interview (doc29) | Rate of 'probes transfer to a new case' within the final third of the session. |
+| `d29dst_SIMPLIFYING_TO_SUBPROBLEM_rate` | interview (doc29) | Session rate of 'breaks the task into a subproblem'. |
+| `d29dst_SIMPLIFYING_TO_SUBPROBLEM_late` | interview (doc29) | Rate of 'breaks the task into a subproblem' within the final third of the session. |
+| `d29dst_MOTIVATING_RELEVANCE_rate` | interview (doc29) | Session rate of 'motivates why it matters'. |
+| `d29dst_MOTIVATING_RELEVANCE_late` | interview (doc29) | Rate of 'motivates why it matters' within the final third of the session. |
+| `d29dst_SUMMARIZING_PROGRESS_rate` | interview (doc29) | Session rate of 'summarises progress so far'. |
+| `d29dst_SUMMARIZING_PROGRESS_late` | interview (doc29) | Rate of 'summarises progress so far' within the final third of the session. |
+| `d29dst_OFFERING_CHOICE_rate` | interview (doc29) | Session rate of 'offers the student a choice'. |
+| `d29dst_OFFERING_CHOICE_late` | interview (doc29) | Rate of 'offers the student a choice' within the final third of the session. |
+| `d29dst_any_move_rate` | interview (doc29) | Rate at which a tutor turn carries any of the seven interview-codebook moves. |
+| `v2ht_asking_question_rate` | added in v2 | Session rate (k-shrunk) of tutor turns where the tutor asking question. |
+| `v2ht_explaining_conceptual_rate` | NTO codebook | Session rate (k-shrunk) of tutor turns where the tutor explaining conceptual. |
+| `v2ht_explaining_procedural_rate` | NTO codebook | Session rate (k-shrunk) of tutor turns where the tutor explaining procedural. |
+| `v2ht_explaining_tool_rate` | added in v2 | Session rate (k-shrunk) of tutor turns where the tutor explains the platform. |
+| `v2ht_feedback_correct_rate` | NTO codebook | Session rate (k-shrunk) of tutor turns where the tutor feedback correct. |
+| `v2ht_feedback_incorrect_rate` | NTO codebook | Session rate (k-shrunk) of tutor turns where the tutor feedback incorrect. |
+| `v2ht_feedback_neutral_rate` | NTO codebook | Session rate (k-shrunk) of tutor turns where the tutor feedback neutral. |
+| `v2ht_giving_answer_rate` | NTO codebook | Session rate (k-shrunk) of tutor turns where the tutor giving answer. |
+| `v2ht_giving_example_rate` | NTO codebook | Session rate (k-shrunk) of tutor turns where the tutor giving example. |
+| `v2ht_giving_hint_rate` | NTO codebook | Session rate (k-shrunk) of tutor turns where the tutor giving hint. |
+| `v2ht_giving_praise_rate` | added in v2 | Session rate (k-shrunk) of tutor turns where the tutor giving praise. |
+| `v2ht_guiding_session_rate` | added in v2 | Session rate (k-shrunk) of tutor turns where the tutor steers the lesson. |
+| `v2ht_motivating_relevance_rate` | interview (doc29) | Session rate (k-shrunk) of tutor turns where the tutor motivates why it matters. |
+| `v2ht_normalizing_difficulty_rate` | interview (doc29) | Session rate (k-shrunk) of tutor turns where the tutor normalises the difficulty. |
+| `v2ht_offering_choice_rate` | interview (doc29) | Session rate (k-shrunk) of tutor turns where the tutor offers the student a choice. |
+| `v2ht_prompting_alternative_representation_rate` | NTO codebook | Session rate (k-shrunk) of tutor turns where the tutor asks for another representation. |
+| `v2ht_prompting_next_step_rate` | NTO codebook | Session rate (k-shrunk) of tutor turns where the tutor asks for the next step. |
+| `v2ht_prompting_related_concepts_rate` | NTO codebook | Session rate (k-shrunk) of tutor turns where the tutor links to a related concept. |
+| `v2ht_prompting_self_correction_rate` | NTO codebook | Session rate (k-shrunk) of tutor turns where the tutor asks the student to fix their own error. |
+| `v2ht_prompting_self_explanation_rate` | NTO codebook | Session rate (k-shrunk) of tutor turns where the tutor asks the student to explain their thinking. |
+| `v2ht_release_handoff_rate` | interview (doc29) | Session rate (k-shrunk) of tutor turns where the tutor hands the work back to the student. |
+| `v2ht_restating_rate` | NTO codebook | Session rate (k-shrunk) of tutor turns where the tutor restating. |
+| `v2ht_revoicing_rate` | NTO codebook | Session rate (k-shrunk) of tutor turns where the tutor revoicing. |
+| `v2ht_simplifying_to_subproblem_rate` | interview (doc29) | Session rate (k-shrunk) of tutor turns where the tutor breaks the task into a subproblem. |
+| `v2ht_summarizing_progress_rate` | interview (doc29) | Session rate (k-shrunk) of tutor turns where the tutor summarises progress so far. |
+| `v2ht_transfer_probe_rate` | interview (doc29) | Session rate (k-shrunk) of tutor turns where the tutor probes transfer to a new case. |
+| `v2ht_tutor_no_move_rate` | residual | Session rate (k-shrunk) of tutor turns where the tutor makes no codeable move. |
+| `v2ht_tutor_other_rate` | residual | Session rate (k-shrunk) of tutor turns where the tutor tutor other. |
+| `v2ht_tutor_social_rate` | residual | Session rate (k-shrunk) of tutor turns where the tutor tutor social. |
+| `v2ht_tutor_technical_rate` | residual | Session rate (k-shrunk) of tutor turns where the tutor tutor technical. |
+| `v2ht_tutor_unintelligible_rate` | residual | Session rate (k-shrunk) of tutor turns where the tutor tutor unintelligible. |
+| `v2ht_worked_demonstration_rate` | added in v2 | Session rate (k-shrunk) of tutor turns where the tutor works the problem aloud. |
+| `v2ht_elicit_to_tell` | derived ratio | Eliciting move mass divided by telling move mass over the v2 taxonomy (capped at 10). |
+| `v2ht_feedback_positive_ratio` | derived ratio | Positive feedback divided by all feedback, over the v2 taxonomy. |
+
+## Student signal (43)
+
+| column | source | description |
+|---|---|---|
+| `d29dst_answer_only_rate` | interview (doc29) | Session rate of 'gives a bare answer with no working'. |
+| `d29dst_answer_only_late` | interview (doc29) | Rate of 'gives a bare answer with no working' within the final third of the session. |
+| `d29dst_reasoning_shown_rate` | interview (doc29) | Session rate of 'shows their working'. |
+| `d29dst_reasoning_shown_late` | interview (doc29) | Rate of 'shows their working' within the final third of the session. |
+| `d29dst_insight_delight_rate` | interview (doc29) | Session rate of 'expresses insight or delight'. |
+| `d29dst_insight_delight_late` | interview (doc29) | Rate of 'expresses insight or delight' within the final third of the session. |
+| `d29dst_frustration_rate` | interview (doc29) | Session rate of 'frustration'. |
+| `d29dst_frustration_late` | interview (doc29) | Rate of 'frustration' within the final third of the session. |
+| `d29dst_hedged_rate` | interview (doc29) | Session rate of 'hedged'. |
+| `d29dst_hedged_late` | interview (doc29) | Rate of 'hedged' within the final third of the session. |
+| `d29dst_unmarked_rate` | interview (doc29) | Session rate of 'shows no confidence marker'. |
+| `d29dst_unmarked_late` | interview (doc29) | Rate of 'shows no confidence marker' within the final third of the session. |
+| `d29dst_assertive_rate` | interview (doc29) | Session rate of 'assertive'. |
+| `d29dst_assertive_late` | interview (doc29) | Rate of 'assertive' within the final third of the session. |
+| `d29dst_answering_rate` | interview (doc29) | Rate at which a student turn is an answer of any kind. |
+| `d29dst_reasoning_share` | interview (doc29) | Share of answering student turns that show reasoning rather than a bare answer. |
+| `d29dst_confidence_contrast` | interview (doc29) | Assertive rate minus hedged rate: net student confidence. |
+| `d29dst_delight_pos_mean` | interview (doc29) | Mean insight/delight probability over the turns where it fires. |
+| `d29dst_delight_any` | interview (doc29) | Whether any turn shows insight or delight. |
+| `v2hs_answer_only_rate` | taxonomy v2 | Session rate (k-shrunk) of student turns where the student gives a bare answer with no working. |
+| `v2hs_confusion_expressed_rate` | taxonomy v2 | Session rate (k-shrunk) of student turns where the student expresses confusion. |
+| `v2hs_frustration_rate` | taxonomy v2 | Session rate (k-shrunk) of student turns where the student frustration. |
+| `v2hs_insight_delight_rate` | taxonomy v2 | Session rate (k-shrunk) of student turns where the student expresses insight or delight. |
+| `v2hs_reasoning_shown_rate` | taxonomy v2 | Session rate (k-shrunk) of student turns where the student shows their working. |
+| `v2hs_seeking_clarification_rate` | taxonomy v2 | Session rate (k-shrunk) of student turns where the student asks for clarification. |
+| `v2hs_self_correcting_rate` | taxonomy v2 | Session rate (k-shrunk) of student turns where the student corrects themselves. |
+| `v2hs_student_no_move_rate` | taxonomy v2 | Session rate (k-shrunk) of student turns where the student makes no codeable move. |
+| `v2hs_student_other_rate` | taxonomy v2 | Session rate (k-shrunk) of student turns where the student student other. |
+| `v2hs_student_social_rate` | taxonomy v2 | Session rate (k-shrunk) of student turns where the student student social. |
+| `v2hs_student_technical_rate` | taxonomy v2 | Session rate (k-shrunk) of student turns where the student student technical. |
+| `v2hs_student_unintelligible_rate` | taxonomy v2 | Session rate (k-shrunk) of student turns where the student student unintelligible. |
+| `studst_explains_why_rate` | 12-code student states | Mean probability that a student turn shows that the student explains why. |
+| `studst_shows_method_rate` | 12-code student states | Mean probability that a student turn shows that the student shows their method. |
+| `studst_answer_only_rate` | 12-code student states | Mean probability that a student turn shows that the student gives a bare answer with no working. |
+| `studst_confused_rate` | 12-code student states | Mean probability that a student turn shows that the student confused. |
+| `studst_hedged_rate` | 12-code student states | Mean probability that a student turn shows that the student hedged. |
+| `studst_insight_rate` | 12-code student states | Mean probability that a student turn shows that the student insight. |
+| `studst_asks_conceptual_rate` | 12-code student states | Mean probability that a student turn shows that the student asks a conceptual question. |
+| `studst_asks_verification_rate` | 12-code student states | Mean probability that a student turn shows that the student asks whether they are right. |
+| `studst_self_corrects_rate` | 12-code student states | Mean probability that a student turn shows that the student self corrects. |
+| `studst_guesses_rate` | 12-code student states | Mean probability that a student turn shows that the student guesses. |
+| `studst_minimal_rate` | 12-code student states | Mean probability that a student turn shows that the student gives a minimal response. |
+| `studst_off_task_rate` | 12-code student states | Mean probability that a student turn shows that the student goes off task. |
+
 ## Answer log (14)
 
 | column | description |
@@ -132,118 +252,6 @@ feature code but dropped by the transformer; they are listed at the end.
 | `rep_re_error_rate` | Share of repair arcs followed by another error within 6 utterances. |
 | `rep_arcs_per_tutor_turn` | Repair arcs per tutor turn. |
 | `rep_has_arc` | Whether the session contains any repair arc at all. |
-
-## Interview codes (34)
-
-| column | description |
-|---|---|
-| `d29dst_NORMALIZING_DIFFICULTY_rate` | Session rate of 'normalises the difficulty'. |
-| `d29dst_NORMALIZING_DIFFICULTY_late` | Rate of 'normalises the difficulty' within the final third of the session. |
-| `d29dst_RELEASE_HANDOFF_rate` | Session rate of 'hands the work back to the student'. |
-| `d29dst_RELEASE_HANDOFF_late` | Rate of 'hands the work back to the student' within the final third of the session. |
-| `d29dst_TRANSFER_PROBE_rate` | Session rate of 'probes transfer to a new case'. |
-| `d29dst_TRANSFER_PROBE_late` | Rate of 'probes transfer to a new case' within the final third of the session. |
-| `d29dst_SIMPLIFYING_TO_SUBPROBLEM_rate` | Session rate of 'breaks the task into a subproblem'. |
-| `d29dst_SIMPLIFYING_TO_SUBPROBLEM_late` | Rate of 'breaks the task into a subproblem' within the final third of the session. |
-| `d29dst_MOTIVATING_RELEVANCE_rate` | Session rate of 'motivates why it matters'. |
-| `d29dst_MOTIVATING_RELEVANCE_late` | Rate of 'motivates why it matters' within the final third of the session. |
-| `d29dst_SUMMARIZING_PROGRESS_rate` | Session rate of 'summarises progress so far'. |
-| `d29dst_SUMMARIZING_PROGRESS_late` | Rate of 'summarises progress so far' within the final third of the session. |
-| `d29dst_OFFERING_CHOICE_rate` | Session rate of 'offers the student a choice'. |
-| `d29dst_OFFERING_CHOICE_late` | Rate of 'offers the student a choice' within the final third of the session. |
-| `d29dst_any_move_rate` | Rate at which a tutor turn carries any of the seven interview-codebook moves. |
-| `d29dst_answer_only_rate` | Session rate of 'gives a bare answer with no working'. |
-| `d29dst_answer_only_late` | Rate of 'gives a bare answer with no working' within the final third of the session. |
-| `d29dst_reasoning_shown_rate` | Session rate of 'shows their working'. |
-| `d29dst_reasoning_shown_late` | Rate of 'shows their working' within the final third of the session. |
-| `d29dst_insight_delight_rate` | Session rate of 'expresses insight or delight'. |
-| `d29dst_insight_delight_late` | Rate of 'expresses insight or delight' within the final third of the session. |
-| `d29dst_frustration_rate` | Session rate of 'frustration'. |
-| `d29dst_frustration_late` | Rate of 'frustration' within the final third of the session. |
-| `d29dst_hedged_rate` | Session rate of 'hedged'. |
-| `d29dst_hedged_late` | Rate of 'hedged' within the final third of the session. |
-| `d29dst_unmarked_rate` | Session rate of 'shows no confidence marker'. |
-| `d29dst_unmarked_late` | Rate of 'shows no confidence marker' within the final third of the session. |
-| `d29dst_assertive_rate` | Session rate of 'assertive'. |
-| `d29dst_assertive_late` | Rate of 'assertive' within the final third of the session. |
-| `d29dst_answering_rate` | Rate at which a student turn is an answer of any kind. |
-| `d29dst_reasoning_share` | Share of answering student turns that show reasoning rather than a bare answer. |
-| `d29dst_confidence_contrast` | Assertive rate minus hedged rate: net student confidence. |
-| `d29dst_delight_pos_mean` | Mean insight/delight probability over the turns where it fires. |
-| `d29dst_delight_any` | Whether any turn shows insight or delight. |
-
-## Tutor move (v2) (34)
-
-| column | description |
-|---|---|
-| `v2ht_asking_question_rate` | Session rate (k-shrunk) of tutor turns where the tutor asking question. |
-| `v2ht_explaining_conceptual_rate` | Session rate (k-shrunk) of tutor turns where the tutor explaining conceptual. |
-| `v2ht_explaining_procedural_rate` | Session rate (k-shrunk) of tutor turns where the tutor explaining procedural. |
-| `v2ht_explaining_tool_rate` | Session rate (k-shrunk) of tutor turns where the tutor explains the platform. |
-| `v2ht_feedback_correct_rate` | Session rate (k-shrunk) of tutor turns where the tutor feedback correct. |
-| `v2ht_feedback_incorrect_rate` | Session rate (k-shrunk) of tutor turns where the tutor feedback incorrect. |
-| `v2ht_feedback_neutral_rate` | Session rate (k-shrunk) of tutor turns where the tutor feedback neutral. |
-| `v2ht_giving_answer_rate` | Session rate (k-shrunk) of tutor turns where the tutor giving answer. |
-| `v2ht_giving_example_rate` | Session rate (k-shrunk) of tutor turns where the tutor giving example. |
-| `v2ht_giving_hint_rate` | Session rate (k-shrunk) of tutor turns where the tutor giving hint. |
-| `v2ht_giving_praise_rate` | Session rate (k-shrunk) of tutor turns where the tutor giving praise. |
-| `v2ht_guiding_session_rate` | Session rate (k-shrunk) of tutor turns where the tutor steers the lesson. |
-| `v2ht_motivating_relevance_rate` | Session rate (k-shrunk) of tutor turns where the tutor motivates why it matters. |
-| `v2ht_normalizing_difficulty_rate` | Session rate (k-shrunk) of tutor turns where the tutor normalises the difficulty. |
-| `v2ht_offering_choice_rate` | Session rate (k-shrunk) of tutor turns where the tutor offers the student a choice. |
-| `v2ht_prompting_alternative_representation_rate` | Session rate (k-shrunk) of tutor turns where the tutor asks for another representation. |
-| `v2ht_prompting_next_step_rate` | Session rate (k-shrunk) of tutor turns where the tutor asks for the next step. |
-| `v2ht_prompting_related_concepts_rate` | Session rate (k-shrunk) of tutor turns where the tutor links to a related concept. |
-| `v2ht_prompting_self_correction_rate` | Session rate (k-shrunk) of tutor turns where the tutor asks the student to fix their own error. |
-| `v2ht_prompting_self_explanation_rate` | Session rate (k-shrunk) of tutor turns where the tutor asks the student to explain their thinking. |
-| `v2ht_release_handoff_rate` | Session rate (k-shrunk) of tutor turns where the tutor hands the work back to the student. |
-| `v2ht_restating_rate` | Session rate (k-shrunk) of tutor turns where the tutor restating. |
-| `v2ht_revoicing_rate` | Session rate (k-shrunk) of tutor turns where the tutor revoicing. |
-| `v2ht_simplifying_to_subproblem_rate` | Session rate (k-shrunk) of tutor turns where the tutor breaks the task into a subproblem. |
-| `v2ht_summarizing_progress_rate` | Session rate (k-shrunk) of tutor turns where the tutor summarises progress so far. |
-| `v2ht_transfer_probe_rate` | Session rate (k-shrunk) of tutor turns where the tutor probes transfer to a new case. |
-| `v2ht_tutor_no_move_rate` | Session rate (k-shrunk) of tutor turns where the tutor makes no codeable move. |
-| `v2ht_tutor_other_rate` | Session rate (k-shrunk) of tutor turns where the tutor tutor other. |
-| `v2ht_tutor_social_rate` | Session rate (k-shrunk) of tutor turns where the tutor tutor social. |
-| `v2ht_tutor_technical_rate` | Session rate (k-shrunk) of tutor turns where the tutor tutor technical. |
-| `v2ht_tutor_unintelligible_rate` | Session rate (k-shrunk) of tutor turns where the tutor tutor unintelligible. |
-| `v2ht_worked_demonstration_rate` | Session rate (k-shrunk) of tutor turns where the tutor works the problem aloud. |
-| `v2ht_elicit_to_tell` | Eliciting move mass divided by telling move mass over the v2 taxonomy (capped at 10). |
-| `v2ht_feedback_positive_ratio` | Positive feedback divided by all feedback, over the v2 taxonomy. |
-
-## Student move (v2) (12)
-
-| column | description |
-|---|---|
-| `v2hs_answer_only_rate` | Session rate (k-shrunk) of student turns where the student gives a bare answer with no working. |
-| `v2hs_confusion_expressed_rate` | Session rate (k-shrunk) of student turns where the student expresses confusion. |
-| `v2hs_frustration_rate` | Session rate (k-shrunk) of student turns where the student frustration. |
-| `v2hs_insight_delight_rate` | Session rate (k-shrunk) of student turns where the student expresses insight or delight. |
-| `v2hs_reasoning_shown_rate` | Session rate (k-shrunk) of student turns where the student shows their working. |
-| `v2hs_seeking_clarification_rate` | Session rate (k-shrunk) of student turns where the student asks for clarification. |
-| `v2hs_self_correcting_rate` | Session rate (k-shrunk) of student turns where the student corrects themselves. |
-| `v2hs_student_no_move_rate` | Session rate (k-shrunk) of student turns where the student makes no codeable move. |
-| `v2hs_student_other_rate` | Session rate (k-shrunk) of student turns where the student student other. |
-| `v2hs_student_social_rate` | Session rate (k-shrunk) of student turns where the student student social. |
-| `v2hs_student_technical_rate` | Session rate (k-shrunk) of student turns where the student student technical. |
-| `v2hs_student_unintelligible_rate` | Session rate (k-shrunk) of student turns where the student student unintelligible. |
-
-## Student state (12)
-
-| column | description |
-|---|---|
-| `studst_explains_why_rate` | Mean probability that a student turn shows that the student explains why. |
-| `studst_shows_method_rate` | Mean probability that a student turn shows that the student shows their method. |
-| `studst_answer_only_rate` | Mean probability that a student turn shows that the student gives a bare answer with no working. |
-| `studst_confused_rate` | Mean probability that a student turn shows that the student confused. |
-| `studst_hedged_rate` | Mean probability that a student turn shows that the student hedged. |
-| `studst_insight_rate` | Mean probability that a student turn shows that the student insight. |
-| `studst_asks_conceptual_rate` | Mean probability that a student turn shows that the student asks a conceptual question. |
-| `studst_asks_verification_rate` | Mean probability that a student turn shows that the student asks whether they are right. |
-| `studst_self_corrects_rate` | Mean probability that a student turn shows that the student self corrects. |
-| `studst_guesses_rate` | Mean probability that a student turn shows that the student guesses. |
-| `studst_minimal_rate` | Mean probability that a student turn shows that the student gives a minimal response. |
-| `studst_off_task_rate` | Mean probability that a student turn shows that the student goes off task. |
 
 ## Built but dropped (92)
 
