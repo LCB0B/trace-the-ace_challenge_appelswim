@@ -31,8 +31,12 @@ are larger. Same matrix, one classification decision apart.
 | Repair | 7 | regex state machine |
 | **Total** | **177** | |
 
-Tutor moves come from three codebooks, and which one matters: 15 of the codes are
-NTO's, used verbatim, and the rest are ours.
+Our tutor moves build on the National Tutoring Observatory's Tutor Move Taxonomy
+([Zhou et al., 2026](https://arxiv.org/abs/2603.05778)). Concretely, we use its 15 learning-support
+codes, with the definitions from the tutor-move prompt in NTO's
+[Sandpiper](https://github.com/National-Tutoring-Observatory/sandpiper/blob/main/app/modules/prompts/helpers/defaultPrompts.ts) repository. They are marked **NTO** below. The rest
+are ours: codes from practising-tutor interviews, codes added after human validation,
+and residual categories.
 
 | tutor-move source | n |
 |---|---:|
@@ -125,28 +129,28 @@ the booster, so both are listed.
 | `d29dst_OFFERING_CHOICE_late` | interview (doc29) | Rate of 'offers the student a choice' within the final third of the session. |
 | `d29dst_any_move_rate` | interview (doc29) | Rate at which a tutor turn carries any of the seven interview-codebook moves. |
 | `v2ht_asking_question_rate` | added in v2 | Session rate (k-shrunk) of tutor turns where the tutor asking question. |
-| `v2ht_explaining_conceptual_rate` | NTO codebook | Session rate (k-shrunk) of tutor turns where the tutor explaining conceptual. |
-| `v2ht_explaining_procedural_rate` | NTO codebook | Session rate (k-shrunk) of tutor turns where the tutor explaining procedural. |
+| `v2ht_explaining_conceptual_rate` | **NTO** | Session rate (k-shrunk) of tutor turns where the tutor explaining conceptual. |
+| `v2ht_explaining_procedural_rate` | **NTO** | Session rate (k-shrunk) of tutor turns where the tutor explaining procedural. |
 | `v2ht_explaining_tool_rate` | added in v2 | Session rate (k-shrunk) of tutor turns where the tutor explains the platform. |
-| `v2ht_feedback_correct_rate` | NTO codebook | Session rate (k-shrunk) of tutor turns where the tutor feedback correct. |
-| `v2ht_feedback_incorrect_rate` | NTO codebook | Session rate (k-shrunk) of tutor turns where the tutor feedback incorrect. |
-| `v2ht_feedback_neutral_rate` | NTO codebook | Session rate (k-shrunk) of tutor turns where the tutor feedback neutral. |
-| `v2ht_giving_answer_rate` | NTO codebook | Session rate (k-shrunk) of tutor turns where the tutor giving answer. |
-| `v2ht_giving_example_rate` | NTO codebook | Session rate (k-shrunk) of tutor turns where the tutor giving example. |
-| `v2ht_giving_hint_rate` | NTO codebook | Session rate (k-shrunk) of tutor turns where the tutor giving hint. |
+| `v2ht_feedback_correct_rate` | **NTO** | Session rate (k-shrunk) of tutor turns where the tutor feedback correct. |
+| `v2ht_feedback_incorrect_rate` | **NTO** | Session rate (k-shrunk) of tutor turns where the tutor feedback incorrect. |
+| `v2ht_feedback_neutral_rate` | **NTO** | Session rate (k-shrunk) of tutor turns where the tutor feedback neutral. |
+| `v2ht_giving_answer_rate` | **NTO** | Session rate (k-shrunk) of tutor turns where the tutor giving answer. |
+| `v2ht_giving_example_rate` | **NTO** | Session rate (k-shrunk) of tutor turns where the tutor giving example. |
+| `v2ht_giving_hint_rate` | **NTO** | Session rate (k-shrunk) of tutor turns where the tutor giving hint. |
 | `v2ht_giving_praise_rate` | added in v2 | Session rate (k-shrunk) of tutor turns where the tutor giving praise. |
 | `v2ht_guiding_session_rate` | added in v2 | Session rate (k-shrunk) of tutor turns where the tutor steers the lesson. |
 | `v2ht_motivating_relevance_rate` | interview (doc29) | Session rate (k-shrunk) of tutor turns where the tutor motivates why it matters. |
 | `v2ht_normalizing_difficulty_rate` | interview (doc29) | Session rate (k-shrunk) of tutor turns where the tutor normalises the difficulty. |
 | `v2ht_offering_choice_rate` | interview (doc29) | Session rate (k-shrunk) of tutor turns where the tutor offers the student a choice. |
-| `v2ht_prompting_alternative_representation_rate` | NTO codebook | Session rate (k-shrunk) of tutor turns where the tutor asks for another representation. |
-| `v2ht_prompting_next_step_rate` | NTO codebook | Session rate (k-shrunk) of tutor turns where the tutor asks for the next step. |
-| `v2ht_prompting_related_concepts_rate` | NTO codebook | Session rate (k-shrunk) of tutor turns where the tutor links to a related concept. |
-| `v2ht_prompting_self_correction_rate` | NTO codebook | Session rate (k-shrunk) of tutor turns where the tutor asks the student to fix their own error. |
-| `v2ht_prompting_self_explanation_rate` | NTO codebook | Session rate (k-shrunk) of tutor turns where the tutor asks the student to explain their thinking. |
+| `v2ht_prompting_alternative_representation_rate` | **NTO** | Session rate (k-shrunk) of tutor turns where the tutor asks for another representation. |
+| `v2ht_prompting_next_step_rate` | **NTO** | Session rate (k-shrunk) of tutor turns where the tutor asks for the next step. |
+| `v2ht_prompting_related_concepts_rate` | **NTO** | Session rate (k-shrunk) of tutor turns where the tutor links to a related concept. |
+| `v2ht_prompting_self_correction_rate` | **NTO** | Session rate (k-shrunk) of tutor turns where the tutor asks the student to fix their own error. |
+| `v2ht_prompting_self_explanation_rate` | **NTO** | Session rate (k-shrunk) of tutor turns where the tutor asks the student to explain their thinking. |
 | `v2ht_release_handoff_rate` | interview (doc29) | Session rate (k-shrunk) of tutor turns where the tutor hands the work back to the student. |
-| `v2ht_restating_rate` | NTO codebook | Session rate (k-shrunk) of tutor turns where the tutor restating. |
-| `v2ht_revoicing_rate` | NTO codebook | Session rate (k-shrunk) of tutor turns where the tutor revoicing. |
+| `v2ht_restating_rate` | **NTO** | Session rate (k-shrunk) of tutor turns where the tutor restating. |
+| `v2ht_revoicing_rate` | **NTO** | Session rate (k-shrunk) of tutor turns where the tutor revoicing. |
 | `v2ht_simplifying_to_subproblem_rate` | interview (doc29) | Session rate (k-shrunk) of tutor turns where the tutor breaks the task into a subproblem. |
 | `v2ht_summarizing_progress_rate` | interview (doc29) | Session rate (k-shrunk) of tutor turns where the tutor summarises progress so far. |
 | `v2ht_transfer_probe_rate` | interview (doc29) | Session rate (k-shrunk) of tutor turns where the tutor probes transfer to a new case. |

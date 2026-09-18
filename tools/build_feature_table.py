@@ -39,6 +39,9 @@ FAMILIES: list[tuple[str, str, str]] = [
     ("rep_", "Repair", "regex state machine"),
 ]
 
+NTO_TAXONOMY_URL = "https://arxiv.org/abs/2603.05778"
+NTO_REPO_URL = "https://github.com/National-Tutoring-Observatory/sandpiper/blob/main/app/modules/prompts/helpers/defaultPrompts.ts"
+
 #: NTO's 15 tutor codes, verbatim (docs/sandpiper_codebooks.md).
 NTO_CODES = {
     "prompting_related_concepts", "prompting_alternative_representation",
@@ -353,8 +356,12 @@ def render(cols: list[str], dropped: list[str]) -> str:
     for col in tutor:
         by_source[source_of(col)] = by_source.get(source_of(col), 0) + 1
     lines += [
-        "Tutor moves come from three codebooks, and which one matters: 15 of the codes are",
-        "NTO's, used verbatim, and the rest are ours.",
+        "Our tutor moves build on the National Tutoring Observatory's Tutor Move Taxonomy",
+        f"([Zhou et al., 2026]({NTO_TAXONOMY_URL})). Concretely, we use its 15 learning-support",
+        "codes, with the definitions from the tutor-move prompt in NTO's",
+        f"[Sandpiper]({NTO_REPO_URL}) repository. They are marked **NTO** below. The rest",
+        "are ours: codes from practising-tutor interviews, codes added after human validation,",
+        "and residual categories.",
         "",
         "| tutor-move source | n |",
         "|---|---:|",
@@ -380,7 +387,9 @@ def render(cols: list[str], dropped: list[str]) -> str:
         lines += [f"## {label} ({len(grouped[label])})", "", *head]
         for col in grouped[label]:
             if annotated:
-                lines.append(f"| `{col}` | {source_of(col)} | {describe(col)} |")
+                src = source_of(col)
+                src = "**NTO**" if src == "NTO codebook" else src
+                lines.append(f"| `{col}` | {src} | {describe(col)} |")
             else:
                 lines.append(f"| `{col}` | {describe(col)} |")
         lines.append("")
@@ -427,7 +436,10 @@ def render_readme_table(cols: list[str]) -> str:
         "|---:|---|---|---|",
     ]
     for i, col in enumerate(cols, 1):
-        lines.append(f"| {i} | `{col}` | {family_of(col)[0]} | {describe(col)} |")
+        fam = family_of(col)[0]
+        if source_of(col) == "NTO codebook":
+            fam += " (NTO)"
+        lines.append(f"| {i} | `{col}` | {fam} | {describe(col)} |")
     lines += ["", END]
     return "\n".join(lines)
 

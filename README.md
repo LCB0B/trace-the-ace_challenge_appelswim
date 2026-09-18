@@ -80,6 +80,7 @@ assets/
   llmkt_calibrator.joblib            frozen Platt for the LLM half (87 bytes)
   baseline.joblib                    the XGBoost model: 5 seeds + frozen Platt
   v2t_clf.joblib, v2s_clf.joblib     distilled per-turn tutor / student move classifiers
+                                     (15 of the 32 tutor codes are NTO's; see "The 177 feature columns")
   doc29_clf.joblib                   distilled interview-codebook classifier
   stu_states_clf.joblib              distilled student-state classifier
   turn_correctness_clf.joblib        distilled per-turn answer-correctness classifier
@@ -337,14 +338,18 @@ The table below is generated directly from `assets/baseline.joblib` by
 
 Summary first, then every column.
 
+Our tutor moves build on the National Tutoring Observatory's Tutor Move Taxonomy
+([Zhou et al., 2026](https://arxiv.org/abs/2603.05778)). Concretely, we use its 15
+learning-support codes, with the definitions from the tutor-move prompt in NTO's
+[Sandpiper](https://github.com/National-Tutoring-Observatory/sandpiper/blob/main/app/modules/prompts/helpers/defaultPrompts.ts) repository. NTO's codes are marked
+**Tutor move (NTO)** in the table below.
+
 | family | n | what it is |
 |---|---:|---|
 | Handcrafted | 54 | regex, counts and timestamps: turn balance, pacing, objective/transcript lexical overlap, curriculum metadata, regex tutor moves |
-| Interview codes (`d29dst_`) | 34 | LLM-distilled interview-codebook tutor moves and student states, each as a session rate and a final-third rate |
-| Tutor moves (`v2ht_`) | 34 | taxonomy-v2 tutor move rates, k-shrunk |
+| Tutor move | 49 | LLM-distilled tutor-move rates: 15 NTO codes, 7 interview codes (measured by two instruments), 5 added after validation, 5 residuals, 2 derived ratios |
+| Student signal | 43 | LLM-distilled student signals: interview codes, taxonomy-v2 codes and 12-code student states |
 | Answer log (`recdst_`) | 14 | distilled per-turn correctness: accuracy, last-1/3/5, recency weighting, run lengths, trend |
-| Student moves (`v2hs_`) | 12 | taxonomy-v2 student move rates, k-shrunk |
-| Student states (`studst_`) | 12 | distilled student states: explains-why, confused, guesses, self-corrects, ... |
 | Contingency (`ctg_`) | 10 | tutor tell/elicit rates split by whether the student was at an impasse |
 | Repair (`rep_`) | 7 | arcs following a tutor correction, and whether the student recovers |
 
@@ -474,28 +479,28 @@ All 177 columns, in the order the booster receives them.
 | 118 | `d29dst_delight_pos_mean` | Student signal | Mean insight/delight probability over the turns where it fires. |
 | 119 | `d29dst_delight_any` | Student signal | Whether any turn shows insight or delight. |
 | 120 | `v2ht_asking_question_rate` | Tutor move | Session rate (k-shrunk) of tutor turns where the tutor asking question. |
-| 121 | `v2ht_explaining_conceptual_rate` | Tutor move | Session rate (k-shrunk) of tutor turns where the tutor explaining conceptual. |
-| 122 | `v2ht_explaining_procedural_rate` | Tutor move | Session rate (k-shrunk) of tutor turns where the tutor explaining procedural. |
+| 121 | `v2ht_explaining_conceptual_rate` | Tutor move (NTO) | Session rate (k-shrunk) of tutor turns where the tutor explaining conceptual. |
+| 122 | `v2ht_explaining_procedural_rate` | Tutor move (NTO) | Session rate (k-shrunk) of tutor turns where the tutor explaining procedural. |
 | 123 | `v2ht_explaining_tool_rate` | Tutor move | Session rate (k-shrunk) of tutor turns where the tutor explains the platform. |
-| 124 | `v2ht_feedback_correct_rate` | Tutor move | Session rate (k-shrunk) of tutor turns where the tutor feedback correct. |
-| 125 | `v2ht_feedback_incorrect_rate` | Tutor move | Session rate (k-shrunk) of tutor turns where the tutor feedback incorrect. |
-| 126 | `v2ht_feedback_neutral_rate` | Tutor move | Session rate (k-shrunk) of tutor turns where the tutor feedback neutral. |
-| 127 | `v2ht_giving_answer_rate` | Tutor move | Session rate (k-shrunk) of tutor turns where the tutor giving answer. |
-| 128 | `v2ht_giving_example_rate` | Tutor move | Session rate (k-shrunk) of tutor turns where the tutor giving example. |
-| 129 | `v2ht_giving_hint_rate` | Tutor move | Session rate (k-shrunk) of tutor turns where the tutor giving hint. |
+| 124 | `v2ht_feedback_correct_rate` | Tutor move (NTO) | Session rate (k-shrunk) of tutor turns where the tutor feedback correct. |
+| 125 | `v2ht_feedback_incorrect_rate` | Tutor move (NTO) | Session rate (k-shrunk) of tutor turns where the tutor feedback incorrect. |
+| 126 | `v2ht_feedback_neutral_rate` | Tutor move (NTO) | Session rate (k-shrunk) of tutor turns where the tutor feedback neutral. |
+| 127 | `v2ht_giving_answer_rate` | Tutor move (NTO) | Session rate (k-shrunk) of tutor turns where the tutor giving answer. |
+| 128 | `v2ht_giving_example_rate` | Tutor move (NTO) | Session rate (k-shrunk) of tutor turns where the tutor giving example. |
+| 129 | `v2ht_giving_hint_rate` | Tutor move (NTO) | Session rate (k-shrunk) of tutor turns where the tutor giving hint. |
 | 130 | `v2ht_giving_praise_rate` | Tutor move | Session rate (k-shrunk) of tutor turns where the tutor giving praise. |
 | 131 | `v2ht_guiding_session_rate` | Tutor move | Session rate (k-shrunk) of tutor turns where the tutor steers the lesson. |
 | 132 | `v2ht_motivating_relevance_rate` | Tutor move | Session rate (k-shrunk) of tutor turns where the tutor motivates why it matters. |
 | 133 | `v2ht_normalizing_difficulty_rate` | Tutor move | Session rate (k-shrunk) of tutor turns where the tutor normalises the difficulty. |
 | 134 | `v2ht_offering_choice_rate` | Tutor move | Session rate (k-shrunk) of tutor turns where the tutor offers the student a choice. |
-| 135 | `v2ht_prompting_alternative_representation_rate` | Tutor move | Session rate (k-shrunk) of tutor turns where the tutor asks for another representation. |
-| 136 | `v2ht_prompting_next_step_rate` | Tutor move | Session rate (k-shrunk) of tutor turns where the tutor asks for the next step. |
-| 137 | `v2ht_prompting_related_concepts_rate` | Tutor move | Session rate (k-shrunk) of tutor turns where the tutor links to a related concept. |
-| 138 | `v2ht_prompting_self_correction_rate` | Tutor move | Session rate (k-shrunk) of tutor turns where the tutor asks the student to fix their own error. |
-| 139 | `v2ht_prompting_self_explanation_rate` | Tutor move | Session rate (k-shrunk) of tutor turns where the tutor asks the student to explain their thinking. |
+| 135 | `v2ht_prompting_alternative_representation_rate` | Tutor move (NTO) | Session rate (k-shrunk) of tutor turns where the tutor asks for another representation. |
+| 136 | `v2ht_prompting_next_step_rate` | Tutor move (NTO) | Session rate (k-shrunk) of tutor turns where the tutor asks for the next step. |
+| 137 | `v2ht_prompting_related_concepts_rate` | Tutor move (NTO) | Session rate (k-shrunk) of tutor turns where the tutor links to a related concept. |
+| 138 | `v2ht_prompting_self_correction_rate` | Tutor move (NTO) | Session rate (k-shrunk) of tutor turns where the tutor asks the student to fix their own error. |
+| 139 | `v2ht_prompting_self_explanation_rate` | Tutor move (NTO) | Session rate (k-shrunk) of tutor turns where the tutor asks the student to explain their thinking. |
 | 140 | `v2ht_release_handoff_rate` | Tutor move | Session rate (k-shrunk) of tutor turns where the tutor hands the work back to the student. |
-| 141 | `v2ht_restating_rate` | Tutor move | Session rate (k-shrunk) of tutor turns where the tutor restating. |
-| 142 | `v2ht_revoicing_rate` | Tutor move | Session rate (k-shrunk) of tutor turns where the tutor revoicing. |
+| 141 | `v2ht_restating_rate` | Tutor move (NTO) | Session rate (k-shrunk) of tutor turns where the tutor restating. |
+| 142 | `v2ht_revoicing_rate` | Tutor move (NTO) | Session rate (k-shrunk) of tutor turns where the tutor revoicing. |
 | 143 | `v2ht_simplifying_to_subproblem_rate` | Tutor move | Session rate (k-shrunk) of tutor turns where the tutor breaks the task into a subproblem. |
 | 144 | `v2ht_summarizing_progress_rate` | Tutor move | Session rate (k-shrunk) of tutor turns where the tutor summarises progress so far. |
 | 145 | `v2ht_transfer_probe_rate` | Tutor move | Session rate (k-shrunk) of tutor turns where the tutor probes transfer to a new case. |
